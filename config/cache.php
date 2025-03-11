@@ -70,7 +70,7 @@ return [
             ],
             'servers' => [
                 [
-                    'host' => env('MEMCACHED_HOST', LOCALHOST_IP),
+                    'host' => env('MEMCACHED_HOST', $LOCALHOST_IP),
                     'port' => env('MEMCACHED_PORT', 11211),
                     'weight' => 100,
                 ],
