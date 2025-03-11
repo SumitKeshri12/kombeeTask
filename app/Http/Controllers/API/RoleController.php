@@ -11,6 +11,8 @@ use App\Http\Resources\RoleResource;
 
 class RoleController extends Controller
 {
+    const PERMISSIONS_VALIDATION_RULE = 'required|array|exists:permissions,id';
+
     public function index()
     {
         $roles = Role::with('permissions')->paginate(10);
@@ -27,7 +29,7 @@ class RoleController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:roles',
-            'permissions' => 'required|array|exists:permissions,id'
+            'permissions' => self::PERMISSIONS_VALIDATION_RULE
         ]);
 
         $role = Role::create(['name' => $validated['name']]);
@@ -45,7 +47,7 @@ class RoleController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-            'permissions' => 'required|array|exists:permissions,id'
+            'permissions' => self::PERMISSIONS_VALIDATION_RULE
         ]);
 
         $role->update(['name' => $validated['name']]);
@@ -69,7 +71,7 @@ class RoleController extends Controller
     public function attachPermissions(Request $request, Role $role)
     {
         $request->validate([
-            'permissions' => 'required|array|exists:permissions,id'
+            'permissions' => self::PERMISSIONS_VALIDATION_RULE
         ]);
 
         $role->permissions()->attach($request->permissions);
@@ -79,10 +81,10 @@ class RoleController extends Controller
     public function detachPermissions(Request $request, Role $role)
     {
         $request->validate([
-            'permissions' => 'required|array|exists:permissions,id'
+            'permissions' => self::PERMISSIONS_VALIDATION_RULE
         ]);
 
         $role->permissions()->detach($request->permissions);
         return response()->json($role->load('permissions'));
     }
-} 
+}

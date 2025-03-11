@@ -10,6 +10,11 @@ use App\Http\Controllers\Web\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+const LOGIN_PATH = '/login';
+const ROLE_SUPER_ADMIN = 'role:Super Admin';
+const ROLE_SUPER_ADMIN_AND_ADMIN = 'role:Super Admin,Admin';
+const CREATE_PATH = '/create';
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,12 +28,12 @@ use Illuminate\Support\Facades\Route;
 
 // Public Routes
 Route::get('/', function () {
-    return redirect('/login');
+    return redirect(LOGIN_PATH);
 });
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::get(LOGIN_PATH, [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post(LOGIN_PATH, [AuthController::class, 'login']);
 });
 
 // Protected Routes
@@ -37,9 +42,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // User management routes
-    Route::prefix('users')->middleware(['role:Super Admin'])->group(function () {
+    Route::prefix('users')->middleware([ROLE_SUPER_ADMIN])->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('users.index');
-        Route::get('/create', [UserController::class, 'create'])->name('users.create');
+        Route::get(CREATE_PATH, [UserController::class, 'create'])->name('users.create');
         Route::post('/', [UserController::class, 'store'])->name('users.store');
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/{user}', [UserController::class, 'update'])->name('users.update');
@@ -47,9 +52,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // Customer management routes
-    Route::prefix('customers')->middleware(['role:Super Admin,Admin'])->group(function () {
+    Route::prefix('customers')->middleware([ROLE_SUPER_ADMIN_AND_ADMIN])->group(function () {
         Route::get('/', [CustomerController::class, 'index'])->name('customers.index');
-        Route::get('/create', [CustomerController::class, 'create'])->name('customers.create');
+        Route::get(CREATE_PATH, [CustomerController::class, 'create'])->name('customers.create');
         Route::post('/', [CustomerController::class, 'store'])->name('customers.store');
         Route::get('/{customer}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
         Route::put('/{customer}', [CustomerController::class, 'update'])->name('customers.update');
@@ -58,9 +63,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // Supplier management routes
-    Route::prefix('suppliers')->middleware(['role:Super Admin,Admin'])->group(function () {
+    Route::prefix('suppliers')->middleware([ROLE_SUPER_ADMIN_AND_ADMIN])->group(function () {
         Route::get('/', [SupplierController::class, 'index'])->name('suppliers.index');
-        Route::get('/create', [SupplierController::class, 'create'])->name('suppliers.create');
+        Route::get(CREATE_PATH, [SupplierController::class, 'create'])->name('suppliers.create');
         Route::post('/', [SupplierController::class, 'store'])->name('suppliers.store');
         Route::get('/{supplier}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
         Route::put('/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
@@ -79,12 +84,12 @@ Route::middleware('auth')->group(function () {
     // User export route
     Route::get('users/export', [UserController::class, 'export'])
         ->name('users.export')
-        ->middleware('role:Super Admin');
+        ->middleware(ROLE_SUPER_ADMIN);
 
     // User export PDF route
     Route::get('users/export-pdf', [UserController::class, 'exportPdf'])
         ->name('users.export-pdf')
-        ->middleware('role:Super Admin');
+        ->middleware(ROLE_SUPER_ADMIN);
 
 });
 

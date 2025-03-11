@@ -15,6 +15,8 @@ use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
+    const USER_VALIDATION_RULE = 'required|string|max:255';
+
     public function index()
     {
         $users = User::with('roles')->paginate(10);
@@ -24,8 +26,8 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => self::USER_VALIDATION_RULE,
+            'last_name' => self::USER_VALIDATION_RULE,
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Password::defaults()],
             'roles' => 'required|array|exists:roles,id'
@@ -51,8 +53,8 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => self::USER_VALIDATION_RULE,
+            'last_name' => self::USER_VALIDATION_RULE,
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => ['nullable', 'confirmed', Password::defaults()],
             'roles' => 'required|array|exists:roles,id'

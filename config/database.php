@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Str;
 
+// Database connection constants
+const LOCALHOST_IP = '127.0.0.1';
+const MYSQL_PORT = '3306';
+const PGSQL_PORT = '5432';
+const SQLSRV_PORT = '1433';
+
 return [
 
     /*
@@ -46,8 +52,8 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
+            'host' => env('DB_HOST', LOCALHOST_IP),
+            'port' => env('DB_PORT', MYSQL_PORT),
             'database' => env('DB_DATABASE', 'forge'),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
@@ -66,8 +72,8 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
+            'host' => env('DB_HOST', LOCALHOST_IP),
+            'port' => env('DB_PORT', PGSQL_PORT),
             'database' => env('DB_DATABASE', 'forge'),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
@@ -81,8 +87,8 @@ return [
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '1433'),
+            'host' => env('DB_HOST', LOCALHOST_IP),
+            'port' => env('DB_PORT', SQLSRV_PORT),
             'database' => env('DB_DATABASE', 'forge'),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
@@ -130,7 +136,7 @@ return [
 
         'default' => [
             'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'host' => env('REDIS_HOST', LOCALHOST_IP),
             'username' => env('REDIS_USERNAME'),
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),
@@ -139,7 +145,7 @@ return [
 
         'cache' => [
             'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'host' => env('REDIS_HOST', LOCALHOST_IP),
             'username' => env('REDIS_USERNAME'),
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),
