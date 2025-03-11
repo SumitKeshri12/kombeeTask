@@ -61,7 +61,7 @@ class AuthController extends Controller
     {
         // Get the currently authenticated user from web session
         $user = Auth::guard('web')->user();
-        
+
         if (!$user) {
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
@@ -82,4 +82,4 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
         return response()->json(['message' => 'Logged out successfully']);
     }
-} 
+}
