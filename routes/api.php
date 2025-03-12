@@ -10,6 +10,8 @@ use App\Http\Controllers\API\CustomerController;
 use App\Http\Controllers\API\LocationController;
 use App\Http\Controllers\Api\StateController;
 use App\Http\Controllers\Api\PermissionController;
+use App\Http\Controllers\NotificationController;
+use Illuminate\Support\Facades\Broadcast;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,7 +52,15 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('customers', CustomerController::class);
     
     // Location
-    Route::get('states/{state}/cities', [LocationController::class, 'getCities']);
+    Route::get('/states/{state}/cities', [StateController::class, 'getCities']);
+
+    // Notifications
+    Route::post('/notifications/send', [NotificationController::class, 'send']);
+    Route::get('/notifications', [NotificationController::class, 'getNotifications']);
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+
+    // Broadcasting authentication
+    Broadcast::routes();
 });
 
 // Auth routes

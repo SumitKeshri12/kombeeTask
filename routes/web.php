@@ -91,6 +91,12 @@ Route::middleware('auth')->group(function () {
         ->name('users.export-pdf')
         ->middleware(ROLE_SUPER_ADMIN);
 
+    Route::get('/notifications-test', function () {
+        return view('notifications-test', [
+            'userId' => auth()->id()
+        ]);
+    })->name('notifications-test');
+
 });
 
 Auth::routes();

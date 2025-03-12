@@ -34,6 +34,12 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <style>
+    .nav-item {
+        display: flex;
+        align-items: center;
+    }
+    </style>
     @stack('styles')
 </head>
 <body class="font-sans antialiased">

@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('BROADCAST_DRIVER', 'null'),
+    'default' => env('BROADCAST_DRIVER', 'reverb'),
 
     /*
     |--------------------------------------------------------------------------
@@ -29,6 +29,26 @@ return [
     */
 
     'connections' => [
+
+        'reverb' => [
+            'driver' => 'reverb',
+            'app_id' => env('REVERB_APP_ID', 'local'),
+            'key' => env('REVERB_APP_KEY', 'local_key'),
+            'secret' => env('REVERB_APP_SECRET', 'local_secret'),
+            'app_name' => env('REVERB_APP_NAME', 'laravel'),
+            'host' => env('REVERB_HOST', '127.0.0.1'),
+            'port' => env('REVERB_PORT', 8080),
+            'scheme' => env('REVERB_SCHEME', 'http'),
+            'path' => env('REVERB_PATH', '/reverb'),
+            'options' => [
+                'cluster' => 'mt1',
+                'encrypted' => false,
+                'useTLS' => false,
+                'host' => env('REVERB_HOST', '127.0.0.1'),
+                'port' => env('REVERB_PORT', 8080),
+                'scheme' => env('REVERB_SCHEME', 'http'),
+            ],
+        ],
 
         'pusher' => [
             'driver' => 'pusher',

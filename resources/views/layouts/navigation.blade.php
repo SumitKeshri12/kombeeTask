@@ -50,6 +50,11 @@
                         <a class="nav-link {{ request()->routeIs('customers.*') ? 'active' : '' }}" 
                             href="{{ route('customers.index') }}">Customers</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('notifications-test') ? 'active' : '' }}" 
+                            href="{{ route('notifications-test') }}">Notifications Test</a>
+                            <span class="badge bg-danger">{{ \App\Helpers\Notifications::getUnreadCount() }}</span>
+                    </li>
                 </ul>
 
                 <!-- Right Side Of Navbar -->

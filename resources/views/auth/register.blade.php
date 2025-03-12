@@ -84,7 +84,7 @@
                         <div class="row mb-3">
                             <label for="city" class="col-md-4 col-form-label text-md-end">{{ __('City') }}</label>
                             <div class="col-md-6">
-                                <select id="city" class="form-control @error('city_id') is-invalid @enderror" name="city_id" required>
+                                <select id="city" class="form-control @error('city_id') is-invalid @enderror" name="city_id">
                                     <option value="">Select City</option>
                                 </select>
                                 @error('city_id')
