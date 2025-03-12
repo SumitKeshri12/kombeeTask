@@ -11,6 +11,14 @@ use App\Models\User;
 
 class NotificationController extends Controller
 {
+    const NOTIFICATION_TYPES = [
+        'unauthorized_access' => 'User not authenticated',
+        'invalid_recipient' => 'Invalid recipient',
+        'failed_to_send' => 'Failed to send notification',
+        'failed_to_get' => 'Failed to get notifications',
+        'failed_to_mark' => 'Failed to mark notification as read',
+    ];    
+    
     public function send(Request $request)
     {
         try {
@@ -23,7 +31,7 @@ class NotificationController extends Controller
             $sender = Auth::user();
             
             if (!$sender) {
-                return response()->json(['error' => 'User not authenticated'], 401);
+                return response()->json(['error' => self::NOTIFICATION_TYPES['unauthorized_access']], 401);
             }
 
             $notification = new RealtimeNotification($request->message, $sender->id);
@@ -43,7 +51,7 @@ class NotificationController extends Controller
                     $recipient->notify($notification);
                     return response()->json(['message' => 'Notification sent to user']);
                 }
-                return response()->json(['error' => 'Invalid recipient'], 400);
+                return response()->json(['error' => self::NOTIFICATION_TYPES['invalid_recipient']], 400);
             }
 
             // Default: Send to all users except sender
@@ -60,7 +68,7 @@ class NotificationController extends Controller
             ]);
             
             return response()->json([
-                'error' => 'Failed to send notification',
+                'error' => self::NOTIFICATION_TYPES['failed_to_send'],
                 'message' => $e->getMessage()
             ], 500);
         }
@@ -72,7 +80,7 @@ class NotificationController extends Controller
             $user = Auth::user();
             
             if (!$user) {
-                return response()->json(['error' => 'User not authenticated'], 401);
+                return response()->json(['error' => self::NOTIFICATION_TYPES['unauthorized_access']], 401);
             }
 
             return response()->json([
@@ -86,7 +94,7 @@ class NotificationController extends Controller
             ]);
             
             return response()->json([
-                'error' => 'Failed to get notifications',
+                'error' => self::NOTIFICATION_TYPES['failed_to_get'],
                 'message' => $e->getMessage()
             ], 500);
         }
@@ -98,7 +106,7 @@ class NotificationController extends Controller
             $user = Auth::user();
             
             if (!$user) {
-                return response()->json(['error' => 'User not authenticated'], 401);
+                return response()->json(['error' => self::NOTIFICATION_TYPES['unauthorized_access']], 401);
             }
 
             $notification = $user->notifications()->findOrFail($id);
@@ -113,7 +121,7 @@ class NotificationController extends Controller
             ]);
             
             return response()->json([
-                'error' => 'Failed to mark notification as read',
+                'error' => self::NOTIFICATION_TYPES['failed_to_mark'],
                 'message' => $e->getMessage()
             ], 500);
         }
