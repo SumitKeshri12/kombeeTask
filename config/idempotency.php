@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'cache_duration' => 86400, // 1 day in seconds
+    'cache_duration' => 10, // 1 day in seconds
 
     // The header to expect in the request
     'idempotency_header' => 'Idempotency-Key',

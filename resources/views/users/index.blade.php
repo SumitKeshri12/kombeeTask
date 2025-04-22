@@ -44,7 +44,9 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Roles</th>
+                                @if(Auth::user()->hasRole('Super Admin'))
                                 <th>Actions</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -53,7 +55,7 @@
                                     <td>{{ $user->first_name }} {{ $user->last_name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->roles->pluck('name')->join(', ') }}</td>
-                                    @if(auth()->user()->roles->contains('slug', 'super-admin'))
+                                    @if(Auth::user()->hasRole('Super Admin'))
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
                                                 <a href="{{ route('users.edit', $user->id) }}" 

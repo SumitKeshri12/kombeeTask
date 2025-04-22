@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,8 +24,8 @@ class UserSeeder extends Seeder
             'hobbies' => ['reading', 'coding']
         ]);
 
-        // Attach super admin role
-        $superAdmin->roles()->attach(Role::where('slug', 'super-admin')->first());
+        // Assign super admin role using Spatie's permission package
+        $superAdmin->assignRole('Super Admin');
 
         // Create some regular users
         $users = [
@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
 
         foreach ($users as $userData) {
             $user = User::create($userData);
-            $user->roles()->attach(Role::where('slug', 'user')->first());
+            $user->assignRole('User');
         }
     }
 } 

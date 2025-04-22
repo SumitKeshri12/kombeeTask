@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Permission;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
@@ -11,28 +11,28 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [
             // User permissions
-            ['name' => 'view-users', 'guard_name' => 'web'],
-            ['name' => 'create-users', 'guard_name' => 'web'],
-            ['name' => 'edit-users', 'guard_name' => 'web'],
-            ['name' => 'delete-users', 'guard_name' => 'web'],
+            ['name' => 'view-users', 'guard_name' => 'api'],
+            ['name' => 'create-users', 'guard_name' => 'api'],
+            ['name' => 'edit-users', 'guard_name' => 'api'],
+            ['name' => 'delete-users', 'guard_name' => 'api'],
             
             // Supplier permissions
-            ['name' => 'view-suppliers', 'guard_name' => 'web'],
-            ['name' => 'create-suppliers', 'guard_name' => 'web'],
-            ['name' => 'edit-suppliers', 'guard_name' => 'web'],
-            ['name' => 'delete-suppliers', 'guard_name' => 'web'],
+            ['name' => 'view-suppliers', 'guard_name' => 'api'],
+            ['name' => 'create-suppliers', 'guard_name' => 'api'],
+            ['name' => 'edit-suppliers', 'guard_name' => 'api'],
+            ['name' => 'delete-suppliers', 'guard_name' => 'api'],
             
             // Customer permissions
-            ['name' => 'view-customers', 'guard_name' => 'web'],
-            ['name' => 'create-customers', 'guard_name' => 'web'],
-            ['name' => 'edit-customers', 'guard_name' => 'web'],
-            ['name' => 'delete-customers', 'guard_name' => 'web'],
+            ['name' => 'view-customers', 'guard_name' => 'api'],
+            ['name' => 'create-customers', 'guard_name' => 'api'],
+            ['name' => 'edit-customers', 'guard_name' => 'api'],
+            ['name' => 'delete-customers', 'guard_name' => 'api'],
             
             // Role permissions
-            ['name' => 'view-roles', 'guard_name' => 'web'],
-            ['name' => 'create-roles', 'guard_name' => 'web'],
-            ['name' => 'edit-roles', 'guard_name' => 'web'],
-            ['name' => 'delete-roles', 'guard_name' => 'web']
+            ['name' => 'view-roles', 'guard_name' => 'api'],
+            ['name' => 'create-roles', 'guard_name' => 'api'],
+            ['name' => 'edit-roles', 'guard_name' => 'api'],
+            ['name' => 'delete-roles', 'guard_name' => 'api']
         ];
 
         foreach ($permissions as $permission) {

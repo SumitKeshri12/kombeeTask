@@ -6,7 +6,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\SupplierController;
-use App\Http\Controllers\API\CustomerController;
+// use App\Http\Controllers\API\CustomerController;
 use App\Http\Controllers\API\LocationController;
 use App\Http\Controllers\Api\StateController;
 use App\Http\Controllers\Api\PermissionController;
@@ -32,8 +32,11 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/states', [StateController::class, 'index']);
 Route::get('/states/{state}/cities', [StateController::class, 'cities']);
 
+// Helper routes
+Route::get('/idempotency-key', [UserController::class, 'getIdempotencyKey']);
+
 // Protected routes
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api', 'idempotent'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     
     // Users API
@@ -41,6 +44,8 @@ Route::middleware('auth:api')->group(function () {
     
     // Roles API
     Route::apiResource('roles', RoleController::class);
+    Route::post('roles/{role}/permissions', [RoleController::class, 'attachPermissions']);
+    Route::delete('roles/{role}/permissions', [RoleController::class, 'detachPermissions']);
     
     // Permissions API
     Route::apiResource('permissions', PermissionController::class);
@@ -49,7 +54,7 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('suppliers', SupplierController::class);
     
     // Customers
-    Route::apiResource('customers', CustomerController::class);
+    // Route::apiResource('customers', CustomerController::class);
     
     // Location
     Route::get('/states/{state}/cities', [StateController::class, 'getCities']);

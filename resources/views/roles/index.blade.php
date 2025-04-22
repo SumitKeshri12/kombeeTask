@@ -19,7 +19,9 @@
                         <tr>
                             <th>Name</th>
                             <th>Permissions</th>
+                            @if(Auth::user()->hasRole('Super Admin'))
                             <th>Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -27,7 +29,7 @@
                             <tr>
                                 <td>{{ $role->name }}</td>
                                 <td>{{ $role->permissions->pluck('name')->join(', ') }}</td>
-                                @if(Auth::user()->roles->contains('slug', 'super-admin'))
+                                @if(Auth::user()->hasRole('Super Admin'))
                                 <td>
                                     <a href="{{ route('roles.edit', $role) }}" class="btn btn-sm btn-primary">Edit</a>
                                     <form action="{{ route('roles.destroy', $role) }}" method="POST" class="d-inline">

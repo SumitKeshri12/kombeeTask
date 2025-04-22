@@ -4,14 +4,16 @@ A robust Laravel application implementing Role-Based Access Control (RBAC) using
 
 ## Features
 
--   User Authentication
--   Role-Based Access Control (RBAC)
+-   User Authentication with Laravel Passport
+-   Role-Based Access Control (RBAC) using Spatie Permissions
 -   Three default roles: Super Admin, Admin, and User
 -   User Management
+-   Supplier Management
 -   City Management
 -   Profile Management with hobbies and personal information
 -   API Support with Laravel Passport
 -   Soft Delete Implementation
+-   Idempotency Support for API Endpoints
 
 ## Requirements
 
@@ -62,8 +64,7 @@ php artisan key:generate
 6. Run database migrations and seeders:
 
 ```bash
-php artisan migrate
-php artisan db:seed
+php artisan migrate --seed
 ```
 
 7. Install Laravel Passport:
@@ -74,62 +75,133 @@ php artisan passport:install
 
 ## Default Users
 
-The system comes with two default user types:
+The system comes with three default users:
 
 1. Super Admin:
 
     - Email: superadmin@example.com
+    - Password: password
     - Role: Super Admin
 
-2. Regular User:
+2. Regular User (John):
+
     - Email: john@example.com
+    - Password: password
     - Role: User
 
-## Role Management
+3. Regular User (Jane):
+    - Email: jane@example.com
+    - Password: password
+    - Role: User
 
-To assign roles to users, you can use the following Artisan commands:
+## API Authentication
 
-```bash
-# Assign Super Admin role
-php artisan role:assign-super-admin {email}
+The API uses Laravel Passport for authentication. Here's how to authenticate:
 
-# Assign User role
-php artisan role:assign-user {email}
+1. Login to get access token:
+
+```http
+POST /api/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "superadmin@example.com",
+    "password": "password"
+}
 ```
 
-## Features by Role
+2. Use the token for subsequent requests:
 
-### Super Admin
+```http
+GET /api/suppliers
+Authorization: Bearer your_access_token_here
+Accept: application/json
+```
 
--   Full access to all features
--   User management
--   Role and permission management
--   City management
--   View all users' profiles
+### Important Authentication Notes:
 
-### Admin
-
--   Limited user management
--   City management
--   View assigned users' profiles
-
-### User
-
--   View and edit own profile
--   Update personal information
--   Manage hobbies and preferences
+-   Access tokens are valid for 15 days
+-   Refresh tokens are valid for 30 days
+-   Personal access tokens expire in 6 months
+-   Always include the `Accept: application/json` header
+-   The `Authorization` header must use the `Bearer` prefix
 
 ## API Endpoints
 
-The application provides RESTful API endpoints for:
+### Authentication Endpoints
 
--   User Management
--   Role Management
--   Permission Management
--   City Management
--   Profile Management
+```http
+POST /api/login - Login user
+POST /api/register - Register new user
+POST /api/logout - Logout user (requires authentication)
+```
 
-API documentation is available at `/api/documentation` when running in development mode.
+### User Management
+
+```http
+GET /api/users - List all users
+POST /api/users - Create new user
+GET /api/users/{id} - Get user details
+PUT /api/users/{id} - Update user
+DELETE /api/users/{id} - Delete user
+```
+
+### Supplier Management
+
+```http
+GET /api/suppliers - List all suppliers
+POST /api/suppliers - Create new supplier
+GET /api/suppliers/{id} - Get supplier details
+PUT /api/suppliers/{id} - Update supplier
+DELETE /api/suppliers/{id} - Delete supplier
+```
+
+### Role & Permission Management
+
+```http
+GET /api/roles - List all roles
+POST /api/roles - Create new role
+GET /api/roles/{id} - Get role details
+PUT /api/roles/{id} - Update role
+DELETE /api/roles/{id} - Delete role
+POST /api/roles/{role}/permissions - Attach permissions to role
+DELETE /api/roles/{role}/permissions - Detach permissions from role
+```
+
+### Location Management
+
+```http
+GET /api/states - List all states
+GET /api/states/{state}/cities - Get cities for a state
+```
+
+## API Idempotency
+
+This project implements idempotency for API requests to prevent duplicate operations. To use idempotency:
+
+1. Include an `Idempotency-Key` header in your POST, PUT, PATCH, or DELETE requests:
+
+```http
+POST /api/suppliers
+Idempotency-Key: 123e4567-e89b-12d3-a456-426614174000
+```
+
+2. The server will:
+    - Process the request normally if the key hasn't been used before
+    - Return the cached response if the same key is used again
+    - Include an `X-Idempotent-Replayed: true` header for cached responses
+
+Example using curl:
+
+```bash
+curl -X POST https://your-api.com/api/suppliers \
+  -H "Authorization: Bearer your_token_here" \
+  -H "Idempotency-Key: 123e4567-e89b-12d3-a456-426614174000" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{"name": "Supplier Name"}'
+```
 
 ## Database Structure
 
@@ -142,6 +214,10 @@ Key tables in the database:
 -   `model_has_permissions`: Maps users to permissions
 -   `role_has_permissions`: Maps roles to permissions
 -   `cities`: Stores city information
+-   `states`: Stores state information
+-   `suppliers`: Stores supplier information
+-   `oauth_access_tokens`: Stores API access tokens
+-   `oauth_refresh_tokens`: Stores API refresh tokens
 
 ## Contributing
 

@@ -12,14 +12,23 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use App\Traits\GeneratesIdempotencyKey;
 
 class UserController extends Controller
 {
+    use GeneratesIdempotencyKey;
+
     const USER_VALIDATION_RULE = 'required|string|max:255';
+
+    public function __construct()
+    {
+        $this->middleware('idempotent')->only(['store', 'update', 'destroy']);
+    }
 
     public function index()
     {
         $users = User::with('roles')->paginate(10);
+        // $users = [];
         return UserResource::collection($users);
     }
 
@@ -28,19 +37,19 @@ class UserController extends Controller
         $validated = $request->validate([
             'first_name' => self::USER_VALIDATION_RULE,
             'last_name' => self::USER_VALIDATION_RULE,
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', 'confirmed', Password::defaults()],
-            'roles' => 'required|array|exists:roles,id'
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:8',
+            'contact_number' => 'required|string',
+            'postcode' => 'required|string',
+            'gender' => 'required|in:male,female,other',
+            'hobbies' => 'required|array',
+            'city_id' => 'required|exists:cities,id'
         ]);
 
-        $user = User::create([
-            'first_name' => $validated['first_name'],
-            'last_name' => $validated['last_name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password'])
-        ]);
-
-        $user->roles()->sync($validated['roles']);
+        $user = User::create($validated);
+        
+        // Assign default role
+        $user->assignRole('User');
 
         return new UserResource($user);
     }
@@ -53,26 +62,18 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
-            'first_name' => self::USER_VALIDATION_RULE,
-            'last_name' => self::USER_VALIDATION_RULE,
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'password' => ['nullable', 'confirmed', Password::defaults()],
-            'roles' => 'required|array|exists:roles,id'
+            'first_name' => 'sometimes|string|max:255',
+            'last_name' => 'sometimes|string|max:255',
+            'contact_number' => 'sometimes|string',
+            'postcode' => 'sometimes|string',
+            'gender' => 'sometimes|in:male,female,other',
+            'hobbies' => 'sometimes|array',
+            'city_id' => 'sometimes|exists:cities,id'
         ]);
 
-        $user->update([
-            'first_name' => $validated['first_name'],
-            'last_name' => $validated['last_name'],
-            'email' => $validated['email']
-        ]);
+        $user->update($validated);
 
-        if (!empty($validated['password'])) {
-            $user->update(['password' => Hash::make($validated['password'])]);
-        }
-
-        $user->roles()->sync($validated['roles']);
-
-        return new UserResource($user->load('roles'));
+        return new UserResource($user);
     }
 
     public function destroy(User $user)
@@ -95,5 +96,18 @@ class UserController extends Controller
             'pdf' => Excel::download(new UsersExport, 'users.pdf'),
             default => response()->json(['error' => 'Invalid format'], 400)
         };
+    }
+
+    /**
+     * Example of generating an idempotency key for clients
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getIdempotencyKey(Request $request)
+    {
+        return response()->json([
+            'idempotency_key' => $this->generateIdempotencyKey()
+        ]);
     }
 } 

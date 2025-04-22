@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -10,9 +10,9 @@ class RoleSeeder extends Seeder
     public function run()
     {
         $roles = [
-            ['name' => 'Super Admin', 'guard_name' => 'web', 'slug' => 'super-admin'],
-            ['name' => 'Admin', 'guard_name' => 'web', 'slug' => 'admin'],
-            ['name' => 'User', 'guard_name' => 'web', 'slug' => 'user'],
+            ['name' => 'Super Admin', 'guard_name' => 'api'],
+            ['name' => 'Admin', 'guard_name' => 'api'],
+            ['name' => 'User', 'guard_name' => 'api'],
         ];
 
         foreach ($roles as $role) {
