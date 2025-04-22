@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\PermissionController;
 use App\Http\Controllers\Web\RoleController;
 use App\Http\Controllers\Web\SupplierController;
 use App\Http\Controllers\Web\UserController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,16 @@ const CREATE_PATH = '/create';
 // Public Routes
 Route::get('/', function () {
     return redirect(LOGIN_PATH);
+});
+
+Route::get('/run-command', function () {
+    $exitCode = Artisan::call('db:seed');
+
+    return response()->json([
+        'message' => 'Command executed',
+        'output' => Artisan::output(),
+        'exitCode' => $exitCode
+    ]);
 });
 
 Route::middleware('guest')->group(function () {
