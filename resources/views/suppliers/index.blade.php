@@ -13,7 +13,7 @@
 
     <div class="card">
         <div class="card-body">
-            @if($suppliers->isEmpty())
+            @if(!isset($suppliers))
                 <div class="alert alert-info">
                     No suppliers found.
                 </div>
@@ -38,6 +38,7 @@
                                     <td>{{ $supplier->phone }}</td>
                                     <td>{{ $supplier->city->name ?? 'N/A' }}</td>
                                     <td>{{ Str::limit($supplier->address, 30) }}</td>
+                                    @if(auth()->user()->roles->contains('slug', 'super-admin'))
                                     <td>
                                         <a href="{{ route('suppliers.edit', $supplier) }}" 
                                            class="btn btn-sm btn-primary">Edit</a>
@@ -52,6 +53,7 @@
                                             </button>
                                         </form>
                                     </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

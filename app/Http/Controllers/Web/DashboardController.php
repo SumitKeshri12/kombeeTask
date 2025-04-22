@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Customer;
 use App\Models\Supplier;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -20,8 +22,8 @@ class DashboardController extends Controller
             ];
 
             return view('dashboard', compact('stats'));
-        } catch (\Exception $e) {
-            \Log::error('Dashboard Error: ' . $e->getMessage());
+        } catch (Exception $e) {
+            Log::error('Dashboard Error: ' . $e->getMessage());
             return view('dashboard')->with('error', 'Error loading dashboard data');
         }
     }

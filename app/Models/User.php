@@ -28,8 +28,7 @@ class User extends Authenticatable
         'gender',
         'hobbies',
         'password',
-        'city_id',
-        'role',
+        'city_id'
     ];
 
     /**
@@ -51,11 +50,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'hobbies' => 'array'
-    ];
-
-    // Default role when creating a new user
-    protected $attributes = [
-        'role' => 'User',
     ];
 
     public function city()
@@ -90,31 +84,5 @@ class User extends Authenticatable
             'art' => 'Art',
             'photography' => 'Photography'
         ];
-    }
-
-    public function isSuperAdmin()
-    {
-        return $this->role === 'Super Admin';
-    }
-
-    public function isAdmin()
-    {
-        return $this->role === 'Admin';
-    }
-
-    public function isUser()
-    {
-        return $this->role === 'User';
-    }
-
-    public function hasRole($role)
-    {
-        return $this->role === $role;
-    }
-
-    public function hasAnyRole($roles)
-    {
-        $roles = is_array($roles) ? $roles : explode(',', $roles);
-        return in_array($this->role, array_map('trim', $roles));
     }
 }

@@ -7,7 +7,7 @@
             <h2>Users Management</h2>
         </div>
         <div class="col-md-6 text-end">
-            @if(auth()->user()->isSuperAdmin())
+            @if(auth()->user()->roles->contains('slug', 'super-admin'))
                 <div class="btn-group me-2">
                     <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown">
                         <i class="fas fa-download"></i> Export
@@ -53,9 +53,9 @@
                                     <td>{{ $user->first_name }} {{ $user->last_name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->roles->pluck('name')->join(', ') }}</td>
+                                    @if(auth()->user()->roles->contains('slug', 'super-admin'))
                                     <td class="text-center">
                                         <div class="btn-group" role="group">
-                                            @if(auth()->user()->isSuperAdmin())
                                                 <a href="{{ route('users.edit', $user->id) }}" 
                                                    class="btn btn-sm btn-primary">
                                                     <i class="fas fa-edit"></i> Edit
@@ -68,9 +68,10 @@
                                                         <i class="fas fa-trash"></i> Delete
                                                     </button>
                                                 @endif
-                                            @endif
+                                            </div>
                                         </div>
                                     </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

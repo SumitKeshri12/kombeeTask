@@ -27,6 +27,7 @@
                             <tr>
                                 <td>{{ $permission->name }}</td>
                                 <td>{{ $permission->roles->pluck('name')->join(', ') }}</td>
+                                @if(auth()->user()->roles->contains('slug', 'super-admin'))
                                 <td>
                                     <a href="{{ route('permissions.edit', $permission) }}" class="btn btn-sm btn-primary">Edit</a>
                                     <form action="{{ route('permissions.destroy', $permission) }}" method="POST" class="d-inline">
@@ -34,8 +35,9 @@
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger" 
                                             onclick="return confirm('Are you sure you want to delete this permission?')">Delete</button>
-                                    </form>
-                                </td>
+                                        </form>
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>
