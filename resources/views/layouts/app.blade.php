@@ -27,13 +27,9 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    @if(file_exists(public_path('build/assets/app.css')))
-        <link rel="stylesheet" href="{{ asset('build/assets/app.css') }}">
-    @endif
+    <!-- Vite Assets -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <style>
     .nav-item {
         display: flex;
@@ -80,11 +76,6 @@
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-    <!-- Custom JS -->
-    @if(file_exists(public_path('build/assets/app.js')))
-        <script src="{{ asset('build/assets/app.js') }}"></script>
-    @endif
-
     <script>
         $.ajaxSetup({
             headers: {
@@ -105,9 +96,6 @@
             };
         });
     </script>
-
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
     @stack('scripts')
 </body>
 </html> 
