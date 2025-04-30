@@ -6,11 +6,20 @@
         "build": "vite build"
     },
     "devDependencies": {
-        "@popperjs/core": "^2.11.6",
-        "axios": "^1.6.4",
-        "bootstrap": "^5.2.3",
+        "@popperjs/core": "^2.11.8",
+        "axios": "^1.8.4",
+        "bootstrap": "^5.3.5",
         "laravel-vite-plugin": "^1.0.0",
         "sass": "^1.56.1",
         "vite": "^6.2.1"
+    },
+    "dependencies": {
+        "datatables.net": "^2.2.2",
+        "datatables.net-bs5": "^2.2.2",
+        "jquery": "^3.7.1",
+        "laravel-echo": "^2.0.2",
+        "pusher-js": "^8.4.0",
+        "select2": "^4.1.0-rc.0",
+        "toastr": "^2.1.4"
     }
 }

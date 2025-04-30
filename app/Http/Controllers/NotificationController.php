@@ -24,8 +24,7 @@ class NotificationController extends Controller
         try {
             $request->validate([
                 'message' => 'required|string',
-                'user_id' => 'nullable|exists:users,id', // Optional: specific user to notify
-                'all_users' => 'nullable|boolean'        // Optional: notify all users
+                'recipient_id' => 'nullable|exists:users,id'
             ]);
 
             $sender = Auth::user();
@@ -34,19 +33,11 @@ class NotificationController extends Controller
                 return response()->json(['error' => self::NOTIFICATION_TYPES['unauthorized_access']], 401);
             }
 
-            $notification = new RealtimeNotification($request->message, $sender->id);
+            $notification = new RealtimeNotification($request->message, $sender);
 
-            if ($request->all_users) {
-                // Send to all users except the sender
-                User::where('id', '!=', $sender->id)->each(function ($user) use ($notification) {
-                    $user->notify($notification);
-                });
-                return response()->json(['message' => 'Notification sent to all users']);
-            }
-
-            if ($request->user_id) {
+            if ($request->recipient_id) {
                 // Send to specific user
-                $recipient = User::find($request->user_id);
+                $recipient = User::find($request->recipient_id);
                 if ($recipient && $recipient->id !== $sender->id) {
                     $recipient->notify($notification);
                     return response()->json(['message' => 'Notification sent to user']);
@@ -83,8 +74,21 @@ class NotificationController extends Controller
                 return response()->json(['error' => self::NOTIFICATION_TYPES['unauthorized_access']], 401);
             }
 
+            $notifications = $user->notifications->map(function ($notification) {
+                return [
+                    'id' => $notification->id,
+                    'message' => $notification->data['message'],
+                    'sender' => [
+                        'id' => $notification->data['sender']['id'],
+                        'name' => $notification->data['sender']['name']
+                    ],
+                    'created_at' => $notification->created_at,
+                    'read_at' => $notification->read_at
+                ];
+            });
+
             return response()->json([
-                'notifications' => $user->notifications,
+                'data' => $notifications,
                 'unread_count' => $user->unreadNotifications->count()
             ]);
         } catch (\Exception $e) {

@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-const LOGIN_PATH = '/login';
-const ROLE_SUPER_ADMIN = 'role:Super Admin';
-const ROLE_SUPER_ADMIN_AND_ADMIN = 'role:Super Admin,Admin';
-const CREATE_PATH = '/create';
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,11 +20,11 @@ const CREATE_PATH = '/create';
 | routes are loaded by the RouteServiceProvider and all of them will
 | be assigned to the "web" middleware group. Make something great!
 |
- */
+*/
 
 // Public Routes
 Route::get('/', function () {
-    return redirect(LOGIN_PATH);
+    return redirect(config('constants.paths.login'));
 });
 
 Route::get('/run-command', function () {
@@ -43,8 +38,8 @@ Route::get('/run-command', function () {
 });
 
 Route::middleware('guest')->group(function () {
-    Route::get(LOGIN_PATH, [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post(LOGIN_PATH, [AuthController::class, 'login']);
+    Route::get(config('constants.paths.login'), [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post(config('constants.paths.login'), [AuthController::class, 'login']);
 });
 
 // Protected Routes
@@ -53,19 +48,23 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // User management routes
-    Route::prefix('users')->middleware([ROLE_SUPER_ADMIN])->group(function () {
+    Route::prefix('users')->middleware([config('constants.roles.super_admin')])->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('users.index');
-        Route::get(CREATE_PATH, [UserController::class, 'create'])->name('users.create');
+        Route::get(config('constants.paths.create'), [UserController::class, 'create'])->name('users.create');
         Route::post('/', [UserController::class, 'store'])->name('users.store');
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+        
+        // User export routes
+        Route::get('/export', [UserController::class, 'export'])->name('users.export');
+        Route::get('/export-pdf', [UserController::class, 'exportPdf'])->name('users.export-pdf');
     });
 
     // Customer management routes
-    Route::prefix('customers')->middleware([ROLE_SUPER_ADMIN_AND_ADMIN])->group(function () {
+    Route::prefix('customers')->middleware([config('constants.roles.super_admin_and_admin')])->group(function () {
         Route::get('/', [CustomerController::class, 'index'])->name('customers.index');
-        Route::get(CREATE_PATH, [CustomerController::class, 'create'])->name('customers.create');
+        Route::get(config('constants.paths.create'), [CustomerController::class, 'create'])->name('customers.create');
         Route::post('/', [CustomerController::class, 'store'])->name('customers.store');
         Route::get('/{customer}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
         Route::put('/{customer}', [CustomerController::class, 'update'])->name('customers.update');
@@ -74,9 +73,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // Supplier management routes
-    Route::prefix('suppliers')->middleware([ROLE_SUPER_ADMIN_AND_ADMIN])->group(function () {
+    Route::prefix('suppliers')->middleware([config('constants.roles.super_admin_and_admin')])->group(function () {
         Route::get('/', [SupplierController::class, 'index'])->name('suppliers.index');
-        Route::get(CREATE_PATH, [SupplierController::class, 'create'])->name('suppliers.create');
+        Route::get(config('constants.paths.create'), [SupplierController::class, 'create'])->name('suppliers.create');
         Route::post('/', [SupplierController::class, 'store'])->name('suppliers.store');
         Route::get('/{supplier}/edit', [SupplierController::class, 'edit'])->name('suppliers.edit');
         Route::put('/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
@@ -92,24 +91,15 @@ Route::middleware('auth')->group(function () {
     // Permissions Management
     Route::resource('permissions', PermissionController::class);
 
-    // User export route
-    Route::get('users/export', [UserController::class, 'export'])
-        ->name('users.export')
-        ->middleware(ROLE_SUPER_ADMIN);
-
-    // User export PDF route
-    Route::get('users/export-pdf', [UserController::class, 'exportPdf'])
-        ->name('users.export-pdf')
-        ->middleware(ROLE_SUPER_ADMIN);
-
     Route::get('/notifications-test', function () {
+        $user = auth()->user();
+        $token = $user->createToken('notification-token')->accessToken;
+        
         return view('notifications-test', [
-            'userId' => auth()->id()
+            'userId' => $user->id,
+            'userToken' => $token
         ]);
     })->name('notifications-test');
-
 });
-
-Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

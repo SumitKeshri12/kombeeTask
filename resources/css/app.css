@@ -1,4 +1,16 @@
-@import 'bootstrap';
+/* Import Bootstrap */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Import DataTables */
+@import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css';
+
+/* Import Select2 */
+@import 'select2/dist/css/select2.min.css';
+
+/* Import Toastr */
+@import 'toastr/build/toastr.min.css';
+
+/* Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

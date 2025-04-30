@@ -14,17 +14,16 @@ class RealtimeNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public $message;
-    public $senderId;
+    public $sender;
     public $notificationId;
-    protected $recipientId;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $message, int $senderId)
+    public function __construct(string $message, User $sender)
     {
         $this->message = $message;
-        $this->senderId = $senderId;
+        $this->sender = $sender;
         $this->notificationId = Str::uuid()->toString();
     }
 
@@ -45,8 +44,8 @@ class RealtimeNotification extends Notification implements ShouldQueue
             'message' => $this->message,
             'time' => now()->toDateTimeString(),
             'sender' => [
-                'id' => $this->senderId,
-                'name' => User::find($this->senderId)->first_name . ' ' . User::find($this->senderId)->last_name,
+                'id' => $this->sender->id,
+                'name' => $this->sender->first_name . ' ' . $this->sender->last_name,
             ],
         ];
     }
@@ -58,15 +57,13 @@ class RealtimeNotification extends Notification implements ShouldQueue
      */
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
-        $sender = User::find($this->senderId);
-        
         return new BroadcastMessage([
             'id' => $this->notificationId,
             'message' => $this->message,
             'time' => now()->toDateTimeString(),
             'sender' => [
-                'id' => $sender->id,
-                'name' => $sender->first_name . ' ' . $sender->last_name
+                'id' => $this->sender->id,
+                'name' => $this->sender->first_name . ' ' . $this->sender->last_name
             ]
         ]);
     }
